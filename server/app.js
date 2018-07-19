@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const utils = require('./utils');
-const appRouteSetup = require('./routes/index.js');
+const apiRouteSetup = require('./routes/index.js');
 const { verifyToken } = require('./helpers/auth.js')
 
 // init app
@@ -17,8 +17,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
 // setup api routes
 const router = express.Router();
-app.use('/api', router)
-appRouteSetup(router);
+app.use('/api', apiRouteSetup(router));
 
 module.exports = app;
 
