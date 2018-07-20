@@ -1,12 +1,13 @@
 const bcrypt = require('bcryptjs')
+const { error_messages } = require('./constants');
 
 let ID = 0;
-const USERS = []
+let USERS = []
 
 const saveUser = (username, password) => {
   return new Promise((resolve, reject) => {
     if (!username || !password){
-      reject();
+      reject(error_messages.missing_parameters);
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -26,12 +27,16 @@ const saveUser = (username, password) => {
 
 const getUser = (username, password) => {
   return new Promise((resolve, reject) => {
+    if (!username || !password){
+      reject(error_messages.missing_parameters);
+    }
+
     const user = USERS.find((user) => {
       return (user.username === username);
     });
 
     if (!user){
-      reject();
+      reject(error_messages.user_not_found);
     }
 
     const hasValidPassword = bcrypt.compareSync(password, user.password);
@@ -39,12 +44,17 @@ const getUser = (username, password) => {
       //remove pass
       resolve(user);
     } else {
-      reject();
+      reject(error_messages.invalid_password);
     }
   })
 }
 
+const clearDB = () => {
+  USERS = []
+}
+
 module.exports = {
   getUser,
-  saveUser
+  saveUser,
+  clearDB
 }
