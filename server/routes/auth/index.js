@@ -10,11 +10,11 @@ module.exports = (router) => {
     }
 
     try {
-      const userId = await storage.saveUser(username, password);
-      const token = generateToken(userId)
+      const user = await storage.saveUser(username, password);
+      const token = generateToken(user.id)
       res.json({ token });
     } catch (e) {
-      res.sendStatus(500);
+      res.status(500).json({ error: e });
     }
   })
 
@@ -28,13 +28,13 @@ module.exports = (router) => {
     try {
       const user = await storage.getUser(username, password);
       if (user){
-        const token = generateToken()
+        const token = generateToken(user.id)
         res.json({ token });
       } else {
         res.sendStatus(401)
       }
     } catch (e) {
-      res.sendStatus(401);
+      res.status(401).json({ error: e });
     }
 
 
@@ -48,7 +48,7 @@ module.exports = (router) => {
         role: decoded.role
       });
     } catch (e) {
-      res.sendStatus(500);
+      res.status(500);
     }
   });
 

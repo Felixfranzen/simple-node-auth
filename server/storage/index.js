@@ -15,13 +15,17 @@ const saveUser = (username, password) => {
 
     ID = ID + 1;
     const userId = ID;
+
     USERS.push({
       username,
       password: hashedPassword,
       id: ID
     });
 
-    resolve(userId);
+    resolve({
+      username,
+      id: userId
+    });
   });
 }
 
@@ -41,8 +45,7 @@ const getUser = (username, password) => {
 
     const hasValidPassword = bcrypt.compareSync(password, user.password);
     if (hasValidPassword){
-      //remove pass
-      resolve(user);
+      resolve({ ...user, password: '' });
     } else {
       reject(error_messages.invalid_password);
     }
