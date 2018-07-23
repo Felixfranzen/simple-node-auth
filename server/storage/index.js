@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs')
+const uuidv4 = require('uuid/v4');
+
 const { error_messages } = require('./constants');
 
-let ID = 0;
 let USERS = []
 
 const saveUser = (username, password) => {
@@ -13,19 +14,14 @@ const saveUser = (username, password) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    ID = ID + 1;
-    const userId = ID;
-
+    const id = uuidv4();
     USERS.push({
       username,
+      id,
       password: hashedPassword,
-      id: ID
     });
 
-    resolve({
-      username,
-      id: userId
-    });
+    resolve({ username, id });
   });
 }
 

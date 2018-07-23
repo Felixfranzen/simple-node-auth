@@ -5,7 +5,8 @@ const { error_messages } = require('../../storage/constants');
 describe('Storage - save user', () => {
 
   test('should resolve when correct params are supplied', async () => {
-    return expect(storage.saveUser('testname','testpass')).resolves.not.toBeUndefined();
+    const res = await expect(storage.saveUser('testname','testpass'));
+    expect(res).not.toBeUndefined();
   });
 
   test('should prevent missing parameters when creating a user', async () => {
@@ -51,7 +52,6 @@ describe('Storage - get user', () => {
 
   test('should omitt the password when resolving a user', async () => {
     const res = await storage.getUser('testname','testpass');
-    console.log(res);
     expect(res.password).toBe('');
   });
 });
