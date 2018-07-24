@@ -10,7 +10,7 @@ module.exports = (router) => {
     }
 
     try {
-      const user = await storage.saveUser(username, password);
+      const user = await storage.saveUser(username, password, req.sql);
       const token = generateToken(user.id)
       res.json({ token });
     } catch (e) {
@@ -26,7 +26,7 @@ module.exports = (router) => {
     }
 
     try {
-      const user = await storage.getUser(username, password);
+      const user = await storage.getUser(username, password, req.sql);
       if (user){
         const token = generateToken(user.id)
         res.json({ token });

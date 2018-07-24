@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "node ./node_modules/jest/bin/jest.js --watchAll",
     "start": "PORT=3000 nodemon index.js"
   },
   "author": "",

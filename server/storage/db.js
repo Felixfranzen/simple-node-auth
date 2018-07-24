@@ -1,19 +1,6 @@
 const mysql = require('mysql');
 const config = require('../config.json');
 
-/*
-config.json requires the following properties to be valid
-{
-  db: {
-    host: '',
-    user: '',
-    password: '',
-    database: ''
-  }
-}
-*/
-
-
 class SQL {
   constructor(config){
       this._config = { ...config, multipleStatements: true };
@@ -21,13 +8,15 @@ class SQL {
 
   async start() {
     return new Promise(async (resolve, reject) => {
+      if (this._pool) resolve();
+
       try {
         this._pool = mysql.createPool(this._config);
 
         let queryString = `
         CREATE TABLE IF NOT EXISTS users (
-          id CHAR(32) PRIMARY KEY,
-          username VARCHAR(255) NOT NUll,
+          id VARCHAR(255) PRIMARY KEY UNIQUE,
+          username VARCHAR(255) NOT NUll UNIQUE,
           password VARCHAR(255) NOT NUll
         );`;
 
@@ -71,6 +60,7 @@ instance.start().catch((e) => {
 })
 
 module.exports = {
+  instance,
   middleware: (req, res, next) => {
     req.sql = instance;
     next();

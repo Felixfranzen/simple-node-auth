@@ -3,10 +3,8 @@ const uuidv4 = require('uuid/v4');
 
 const { error_messages } = require('./constants');
 
-let USERS = []
-
-const saveUser = (username, password) => {
-  return new Promise((resolve, reject) => {
+const saveUser = (username, password, sql) => {
+  return new Promise(async (resolve, reject) => {
     if (!username || !password){
       reject(error_messages.missing_parameters);
     }
@@ -15,45 +13,45 @@ const saveUser = (username, password) => {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     const id = uuidv4();
-    USERS.push({
-      username,
-      id,
-      password: hashedPassword,
-    });
+
+    try {
+      const query = await sql.query('INSERT INTO users (id, username, password) VALUES (?, ? ,?)', [id, username, hashedPassword]);
+    } catch (e) {
+      reject(e);
+    }
 
     resolve({ username, id });
   });
 }
 
-const getUser = (username, password) => {
-  return new Promise((resolve, reject) => {
+const getUser = (username, password, sql) => {
+  return new Promise(async (resolve, reject) => {
     if (!username || !password){
       reject(error_messages.missing_parameters);
+      return;
     }
 
-    const user = USERS.find((user) => {
-      return (user.username === username);
-    });
+    const query = await sql.query('SELECT * FROM users WHERE username = ?', username);
+    const user = query.results[0];
 
     if (!user){
       reject(error_messages.user_not_found);
+      return;
     }
 
     const hasValidPassword = bcrypt.compareSync(password, user.password);
     if (hasValidPassword){
-      resolve({ ...user, password: '' });
+      resolve({
+        id: user.id,
+        username: user.username
+      });
     } else {
       reject(error_messages.invalid_password);
     }
   })
 }
 
-const clearDB = () => {
-  USERS = []
-}
-
 module.exports = {
   getUser,
-  saveUser,
-  clearDB
+  saveUser
 }
