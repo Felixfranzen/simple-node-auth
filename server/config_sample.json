@@ -1,0 +1,8 @@
+{
+  "db": {
+    "host": "localhost",
+    "user": "USER",
+    "password": "PASS",
+    "database": "tdd_chat"
+  }
+}
