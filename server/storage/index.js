@@ -3,7 +3,7 @@ const uuidv4 = require('uuid/v4');
 
 const { error_messages } = require('./constants');
 
-const saveUser = (username, password, sql) => {
+const saveUser = (sql, username, password) => {
   return new Promise(async (resolve, reject) => {
     if (!username || !password){
       reject(error_messages.missing_parameters);
@@ -11,20 +11,23 @@ const saveUser = (username, password, sql) => {
 
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
-
     const id = uuidv4();
 
     try {
       const query = await sql.query('INSERT INTO users (id, username, password) VALUES (?, ? ,?)', [id, username, hashedPassword]);
     } catch (e) {
-      reject(e);
+      if (e.code === 'ER_DUP_ENTRY') {
+        reject(error_messages.user_already_exists);
+      } else {
+        reject(error_messages.general);
+      }
     }
 
     resolve({ username, id });
   });
 }
 
-const getUser = (username, password, sql) => {
+const getUser = (sql, username, password) => {
   return new Promise(async (resolve, reject) => {
     if (!username || !password){
       reject(error_messages.missing_parameters);

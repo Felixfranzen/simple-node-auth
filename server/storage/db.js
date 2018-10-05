@@ -1,5 +1,7 @@
 const mysql = require('mysql');
-const config = require('../config.json');
+
+const configPath = __TEST__ ? '../config_test.json' : '../config.json';
+const config = require(configPath);
 
 class SQL {
   constructor(config){
@@ -15,7 +17,7 @@ class SQL {
 
         let queryString = `
         CREATE TABLE IF NOT EXISTS users (
-          id VARCHAR(255) PRIMARY KEY UNIQUE,
+          id VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
           username VARCHAR(255) NOT NUll UNIQUE,
           password VARCHAR(255) NOT NUll
         );`;
@@ -47,7 +49,7 @@ class SQL {
             fields
           });
 
-        })
+        });
       });
     })
   }

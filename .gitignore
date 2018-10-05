@@ -1,2 +1,5 @@
 node_modules
 server/config.json
+npm-debug.log
+config.json
+config_test.json
