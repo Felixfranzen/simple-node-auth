@@ -1,1 +1,1 @@
-Sample project created to learn more about authentication
+Sample project created to learn more about authorization
